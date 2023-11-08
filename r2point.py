@@ -38,11 +38,15 @@ class R2Point:
         s = R2Point.area(a, b, self)
         return s < 0.0 or (s == 0.0 and not self.is_inside(a, b))
 
+    def __str__(self) -> str:
+        return f'({self.x}, {self.y})'
+
     # Совпадает ли точка с другой?
     def __eq__(self, other):
         if isinstance(other, type(self)):
             return self.x == other.x and self.y == other.y
         return False
+    
 
 
 if __name__ == "__main__":
@@ -51,3 +55,4 @@ if __name__ == "__main__":
     print(x.dist(R2Point(1.0, 0.0)))
     a, b, c = R2Point(0.0, 0.0), R2Point(1.0, 0.0), R2Point(1.0, 1.0)
     print(R2Point.area(a, c, b))
+    print(a)

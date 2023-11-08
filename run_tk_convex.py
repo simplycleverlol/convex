@@ -31,13 +31,14 @@ setattr(Polygon, 'draw', polygon_draw)
 tk = TkDrawer()
 f = Void()
 tk.clean()
-
 try:
     while True:
         f = f.add(R2Point())
         tk.clean()
+        tk.draw_line(R2Point(-100, 1), R2Point(100, 1))
+        tk.draw_line(R2Point(-100, -1), R2Point(100, -1))
         f.draw(tk)
-        print(f"S = {f.area()}, P = {f.perimeter()}\n")
-except(EOFError, KeyboardInterrupt):
+        print(f"S = {f.area()}, P = {f.perimeter()}, ISP = {f.isp()}")
+except (EOFError, KeyboardInterrupt):
     print("\nStop")
     tk.close()
