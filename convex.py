@@ -62,11 +62,6 @@ class Segment(Figure):
     def perimeter(self):
         return 2.0 * self.p.dist(self.q)
 
-    def includes(self, p: R2Point):
-        if R2Point.is_triangle(self.p, self.q, p):
-            return False
-        return p.is_inside(self.p, self.q)
-
     def add(self, r):
         if R2Point.is_triangle(self.p, self.q, r):
             self = Polygon(self.p, self.q, r)

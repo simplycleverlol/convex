@@ -65,29 +65,23 @@ class TestPoint:
     def test_add2(self):
         assert isinstance(self.f.add(R2Point(1.0, 0.0)), Segment)
 
-    # Нет отрезка
+    # Начало координат
     def test_isp0(self):
-        assert self.f.isp() == 0
+        assert self.f.isp() == 1
 
-    # Точка на отрезке
+    # Точка в полосе
     def test_isp1(self):
-        self.f.setcutsegment(R2Point(-1, -1), R2Point(1, 1))
-        assert self.f.isp() == 1
+        assert Point(R2Point(-10.0, 0.5)).isp() == 1
 
-    # Точка на конце отрезка
+    # Точка вне полосы
     def test_isp2(self):
-        self.f.setcutsegment(R2Point(0, 0), R2Point(1, 1))
-        assert self.f.isp() == 1
+        assert Point(R2Point(-1.0, 10.0)).isp() == 0
 
-    # Точка не на отрезке
+    # Точка на границе полосы
     def test_isp3(self):
-        self.f.setcutsegment(R2Point(-1, 1), R2Point(1, 1))
-        assert self.f.isp() == 0
+        assert Point(R2Point(-1.0, -1.0)).isp() == 0
 
-    # Точка не на отрезке, но на его прямой
-    def test_isp4(self):
-        self.f.setcutsegment(R2Point(5, 0), R2Point(1, 0))
-        assert self.f.isp() == 0
+
 
 
 class TestSegment:
@@ -119,69 +113,39 @@ class TestSegment:
     # При добавлении точки двуугольник может превратиться в другой двуугольник
     def test_add2(self):
         assert isinstance(self.f.add(R2Point(2.0, 0.0)), Segment)
+        assert isinstance(self.f.add(R2Point(-2.0, 0.0)), Segment)
 
     # При добавлении точки двуугольник может превратиться в треугольник
-    def test_add2(self):
+    def test_add3(self):
         assert isinstance(self.f.add(R2Point(0.0, 1.0)), Polygon)
 
     # Тесты на мощность множества пересечения
-    # Без отрезка
+    # Имеющийся отрезок в полосе
     def test_isp1(self):
-        assert self.f.isp() == 0
+        assert self.f.isp() == float('inf')
 
-    # Соприкасаются концами и не параллельны
+    # Отрезок точкой касается границы
     def test_isp2(self):
-        self.f.cs = Segment(R2Point(1, 0), R2Point(0, 1))
-        assert self.f.isp() == 1
+        self.f = Segment(R2Point(0.0, 1.0), R2Point(1.0, 2.0))
+        assert self.f.isp() == 0
 
-    # Соприкасаются концами и параллельны
+    # отрезок чуть чуть заходит в полосу
     def test_isp3(self):
-        self.f.cs = Segment(R2Point(1, 0), R2Point(2, 0))
-        assert self.f.isp() == 1
-        self.f.cs = Segment(R2Point(0, 0), R2Point(-2, 0))
-        assert self.f.isp() == 1
+        self.f = Segment(R2Point(1, 2), R2Point(2, 0.99999999))
+        assert self.f.isp() == float('inf')
+        self.f = Segment(R2Point(0, -4), R2Point(-2, -0.999999999))
+        assert self.f.isp() == float('inf')
 
-    # накладываются справа, слева, посередине
+    # Отрезок полностью вне полосы
     def test_isp4(self):
-        self.f.cs = Segment(R2Point(0.5, 0), R2Point(2, 0))
-        assert self.f.isp() == float('inf')
-        self.f.cs = Segment(R2Point(-1, 0), R2Point(0.2, 0))
-        assert self.f.isp() == float('inf')
-        self.f.cs = Segment(R2Point(0.5, 0), R2Point(0.2, 0))
-        assert self.f.isp() == float('inf')
+        self.f = Segment(R2Point(0.5, 2), R2Point(2, 2))
+        assert self.f.isp() == 0
+        self.f = Segment(R2Point(7, 3), R2Point(4, 1.1))
+        assert self.f.isp() == 0
 
-    # пересекаются посередине
+    # Отрезок пересекает полосу
     def test_isp5(self):
-        self.f.cs = Segment(R2Point(1, 1), R2Point(0, -1))
-        assert self.f.isp() == 1
-        self.f.cs = Segment(R2Point(0, 1), R2Point(1, -1))
-        assert self.f.isp() == 1
-
-    # параллельны
-    def test_isp6(self):
-        self.f.cs = Segment(R2Point(0.5, 1), R2Point(2, 1))
-        assert self.f.isp() == 0
-        self.f.cs = Segment(R2Point(-1, 1), R2Point(0.2, 1))
-        assert self.f.isp() == 0
-        self.f.cs = Segment(R2Point(0.5, 1), R2Point(0.2, 1))
-        assert self.f.isp() == 0
-
-    # не параллельны и не пересекаются
-    def test_isp3(self):
-        self.f.cs = Segment(R2Point(1, 1), R2Point(2, 0))
-        assert self.f.isp() == 0
-        self.f.cs = Segment(R2Point(0, 1), R2Point(-2, 0))
-        assert self.f.isp() == 0
-        self.f.cs = Segment(R2Point(1, 1), R2Point(0, 2))
-        assert self.f.isp() == 0
-        self.f.cs = Segment(R2Point(1, 1), R2Point(-1, 0))
-        assert self.f.isp() == 0
-        self.f.cs = Segment(R2Point(0, -2), R2Point(1, -1))
-        assert self.f.isp() == 0
-
-    # совпадают
-    def test_isp4(self):
-        self.f.cs = self.f
+        self.f = Segment(R2Point(-2, -2), R2Point(2, 2))
         assert self.f.isp() == float('inf')
 
 
@@ -253,40 +217,40 @@ class TestPolygon:
 
     # мощность пересечения
     def test_isp0(self):
-        assert self.f.isp() == 0
-
+        assert self.f.isp() == float('inf')
+    
     def test_isp1(self):
-        self.f = Void(Segment(R2Point(1, 1), R2Point(4, 4)))
+        self.f = Void()
         assert self.f.isp() == 0
         self.f = self.f.add(R2Point(0, 0))
-        assert self.f.isp() == 0
+        assert self.f.isp() == 1
         self.f = self.f.add(R2Point(4, 0))
-        assert self.f.isp() == 0
+        assert self.f.isp() == float('inf')
         self.f = self.f.add(R2Point(4, 4))
         assert self.f.isp() == float('inf')
         self.f = self.f.add(R2Point(0, 4))
-        assert self.f.isp() == 1
+        assert self.f.isp() == float('inf')
         self.f = self.f.add(R2Point(4, 8))
-        assert self.f.isp() == 1
+        assert self.f.isp() == float('inf')
         self.f = self.f.add(R2Point(-1, -1))
-        assert self.f.isp() == 1
+        assert self.f.isp() == float('inf')
         self.f = self.f.add(R2Point(5, 5))
-        assert self.f.isp() == 0
+        assert self.f.isp() == float('inf')
 
     def test_isp2(self):
-        self.f = Void(Segment(R2Point(1, 1), R2Point(3, 1)))
+        self.f = Void()
         assert self.f.isp() == 0
-        self.f = self.f.add(R2Point(1, 0))
+        self.f = self.f.add(R2Point(7, 1.1))
         assert self.f.isp() == 0
-        self.f = self.f.add(R2Point(3, 0))
+        self.f = self.f.add(R2Point(7, 1))
         assert self.f.isp() == 0
         self.f = self.f.add(R2Point(2, 4))
-        assert self.f.isp() == 2
-        self.f = self.f.add(R2Point(1, 4))
-        assert self.f.isp() == 2
-        self.f = self.f.add(R2Point(3, 4))
-        assert self.f.isp() == 2
-        self.f = self.f.add(R2Point(0, 0))
-        assert self.f.isp() == 1
-        self.f = self.f.add(R2Point(5, 0))
         assert self.f.isp() == 0
+        self.f = self.f.add(R2Point(1, 4))
+        assert self.f.isp() == 0
+        self.f = self.f.add(R2Point(3, 4))
+        assert self.f.isp() == 0
+        self.f = self.f.add(R2Point(7, 0.99999))
+        assert self.f.isp() == float('inf')
+        self.f = self.f.add(R2Point(0, 0))
+        assert self.f.isp() == float('inf')

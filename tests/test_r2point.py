@@ -70,3 +70,9 @@ class TestR2Point:
     def test_is_light4(self):
         a, b = R2Point(0.0, 0.0), R2Point(1.0, 0.0)
         assert R2Point(0.5, -0.5).is_light(a, b) is True
+
+    def test_is_point(srlf):
+       assert R2Point(0, 0) != 0
+
+    def test_strview(srlf):
+       assert str(R2Point(1.0, 0.0)) == '(1.0, 0.0)'
