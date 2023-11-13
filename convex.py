@@ -8,9 +8,9 @@ from intersections import *
 # Возможные ответы: 0, inf, 1
 # так как полоса задана строгим неравенством, при наличии в оболочке
 # больше двух точек, невозможна ситуация,
-# в которой только одна, или конечное ненулевое множество точек границы 
+# в которой только одна, или конечное ненулевое множество точек границы
 # принадлежат полосе. Если хотя бы одна точка границы содержится в полосе,
-# то содержится и часть соответствующих ей отрезков 
+# то содержится и часть соответствующих ей отрезков
 
 # Особенности решения:
 # так как решение должно быть индуктивным, а значение мощности бывает
@@ -18,8 +18,6 @@ from intersections import *
 # то пустым оно уже не станет
 # Непустое пересечение имеют ребра, концы которых находятся внутри
 # полосы или по разные стороны от неё
-  
-
 
 
 class Figure:
@@ -29,6 +27,7 @@ class Figure:
 
     def area(self):
         return 0.0
+
 
 class Void(Figure):
     """ "Hульугольник" """
@@ -91,9 +90,8 @@ class Polygon(Figure):
         self._area = abs(R2Point.area(a, b, c))
         self._isp = intersec(a, b) or intersec(b, c) or intersec(c, a)
 
-
     def __ispadd(self, a: R2Point, b: R2Point):
-        if  not self._isp:
+        if not self._isp:
             self._isp = intersec(a, b)
 
     def perimeter(self):
@@ -142,7 +140,7 @@ class Polygon(Figure):
             self._perimeter += t.dist(self.points.first()) + \
                 t.dist(self.points.last())
             # Добавляем два ребра
-            
+
             self.__ispadd(self.points.first(), t)
             self.__ispadd(t, self.points.last())
             self.points.push_first(t)

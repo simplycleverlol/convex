@@ -46,7 +46,6 @@ class R2Point:
         if isinstance(other, type(self)):
             return self.x == other.x and self.y == other.y
         return False
-    
 
 
 if __name__ == "__main__":
