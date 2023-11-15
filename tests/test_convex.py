@@ -82,8 +82,6 @@ class TestPoint:
         assert Point(R2Point(-1.0, -1.0)).isp() == 0
 
 
-
-
 class TestSegment:
 
     # Инициализация (выполняется для каждого из тестов класса)
@@ -218,7 +216,7 @@ class TestPolygon:
     # мощность пересечения
     def test_isp0(self):
         assert self.f.isp() == float('inf')
-    
+
     def test_isp1(self):
         self.f = Void()
         assert self.f.isp() == 0
